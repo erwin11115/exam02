@@ -398,11 +398,7 @@ void guesture_IU() {//Arguments *in, Reply *out) {
       continue;
     }
 
-    int k = 0;
-    while(k++<10) {
-      BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
-      ThisThread::sleep_for(100ms);
-    }
+
 
     // Run inference, and report any error
 
@@ -422,12 +418,25 @@ void guesture_IU() {//Arguments *in, Reply *out) {
 
 
     if(gesture_index == 0) {
+      int k = 0;
+      while(k++<10) {
+        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+        ThisThread::sleep_for(10ms);
+      }
       cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] << endl;
       
     } else if (gesture_index == 1) {
+            while(k++<10) {
+        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+        ThisThread::sleep_for(10ms);
+      }
       cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
       
     } else if (gesture_index == 2) {
+            while(k++<10) {
+        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+        ThisThread::sleep_for(10ms);
+      }
       cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
       
     }
