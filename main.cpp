@@ -416,9 +416,9 @@ void guesture_IU() {//Arguments *in, Reply *out) {
 
     // us gesture index to control the index
 
+      int k = 0;
 
     if(gesture_index == 0) {
-      int k = 0;
       while(k++<10) {
         BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
         ThisThread::sleep_for(10ms);
@@ -433,7 +433,7 @@ void guesture_IU() {//Arguments *in, Reply *out) {
       cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
       
     } else if (gesture_index == 2) {
-            while(k++<10) {
+      while(k++<10) {
         BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
         ThisThread::sleep_for(10ms);
       }
