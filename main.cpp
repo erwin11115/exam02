@@ -385,6 +385,8 @@ void guesture_IU() {//Arguments *in, Reply *out) {
 
   error_reporter->Report("Set up successful...\n");
 
+
+  
   BSP_ACCELERO_Init();
   while (mode == 0) {
 
@@ -417,28 +419,21 @@ void guesture_IU() {//Arguments *in, Reply *out) {
     // us gesture index to control the index
 
       int k = 0;
+    if(gesture_index < 3)
+      cout << "reference acceleration vector:" << endl;
+      ThisThread::sleep_for(2000ms);
+       while(k++<10) {
+        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+        cout << DataXYZ[k][0] << "," << DataXYZ[k][1] << "," << DataXYZ[k][2] << endl;
+        ThisThread::sleep_for(100ms);
+      }   
 
     if(gesture_index == 0) {
-      while(k++<10) {
-        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
-        ThisThread::sleep_for(10ms);
-      }
       cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] << endl;
-      
     } else if (gesture_index == 1) {
-            while(k++<10) {
-        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
-        ThisThread::sleep_for(10ms);
-      }
       cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
-      
     } else if (gesture_index == 2) {
-      while(k++<10) {
-        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
-        ThisThread::sleep_for(10ms);
-      }
-      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
-      
+      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;      
     }
 
 
