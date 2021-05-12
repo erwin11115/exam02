@@ -45,6 +45,9 @@ int time_length = 20;
 
 int16_t DataXYZ[10][3] = {0};
 
+int fea_list[9];
+int QQ;
+
 Thread t;
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
 Thread k;
@@ -389,7 +392,7 @@ void guesture_IU() {//Arguments *in, Reply *out) {
   
   BSP_ACCELERO_Init();
   while (mode == 0) {
-
+    gesture_index = 5;
     // Attempt to read new data from the accelerometer
     got_data = ReadAccelerometer(error_reporter, model_input->data.f,
                                  input_length, should_clear_buffer);
@@ -419,7 +422,8 @@ void guesture_IU() {//Arguments *in, Reply *out) {
     // us gesture index to control the index
 
       int k = 0;
-    if(gesture_index < 3)
+    //if(gesture_index < label_num)
+    /*
       cout << "reference acceleration vector:" << endl;
       ThisThread::sleep_for(2000ms);
        while(k++<10) {
@@ -427,16 +431,46 @@ void guesture_IU() {//Arguments *in, Reply *out) {
         cout << DataXYZ[k][0] << "," << DataXYZ[k][1] << "," << DataXYZ[k][2] << endl;
         ThisThread::sleep_for(100ms);
       }   
-
+*/
     if(gesture_index == 0) {
-      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] << endl;
+
+      cout << "0 reference acceleration vector:" << endl;
+      ThisThread::sleep_for(2000ms);
+       while(k++<10) {
+        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+        cout << DataXYZ[k][0] << "," << DataXYZ[k][1] << "," << DataXYZ[k][2] << endl;
+        ThisThread::sleep_for(100ms);
+      }
+      tiltDetective();
+      mqtt_queue.call(&publish_message, &client2);
+
     } else if (gesture_index == 1) {
-      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
+
+      cout << "1 reference acceleration vector:" << endl;
+      ThisThread::sleep_for(2000ms);
+       while(k++<10) {
+        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+        cout << DataXYZ[k][0] << "," << DataXYZ[k][1] << "," << DataXYZ[k][2] << endl;
+        ThisThread::sleep_for(100ms);
+      }
+            tiltDetective();
+      mqtt_queue.call(&publish_message, &client2);
+
     } else if (gesture_index == 2) {
-      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;      
+      
+      cout << "2 reference acceleration vector:" << endl;
+      ThisThread::sleep_for(2000ms);
+       while(k++<10) {
+        BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+        cout << DataXYZ[k][0] << "," << DataXYZ[k][1] << "," << DataXYZ[k][2] << endl;
+        ThisThread::sleep_for(100ms);
+      }
+            tiltDetective();
+      mqtt_queue.call(&publish_message, &client2);
+
     }
 
-
+    QQ = gesture_indexl;
 
     // Produce an output
     if (gesture_index < label_num) {
@@ -498,14 +532,15 @@ void publish_message(MQTT::Client<MQTTNetwork, Countdown>* client) {
     MQTT::Message message;
     char buff[100];
 
-    if(mode == 0) {
+    if(mode == 1) {
       topic = topic1;
       printf("topic1\n");
       sprintf(buff, "%d\r\n", angle_list[angle_index]);
     } else {
       topic = topic2;
       printf("topic2\n");
-      sprintf(buff, "%d\r\n",int(angle_det));
+      sprintf(buff, "%d%d%d%d%d%d%d%d%d\r\n",QQ, fea_list[0], fea_list[1], fea_list[2], fea_list[3], fea_list[4]
+                                                            , fea_list[5], fea_list[6], fea_list[7], fea_list[8]);
     }
 
     
@@ -566,110 +601,37 @@ void tiltDetective() {
     double mag_B;
     double cos;
     double rad_det;
-    //double angle_det;
-    //int idR[32] = {0};
-    //int indexR = 0;
-    NetworkInterface* net = wifi;
-    MQTTNetwork mqttNetwork(net);
-    MQTT::Client<MQTTNetwork, Countdown> client2(mqttNetwork);
-
-    //TODO: revise host to your IP
-    const char* host = "192.168.43.254";
-    printf("Connecting to TCP network...\r\n");
-
-    SocketAddress sockAddr;
-    sockAddr.set_ip_address(host);
-    sockAddr.set_port(1883);
-
-    printf("address is %s/%d\r\n", (sockAddr.get_ip_address() ? sockAddr.get_ip_address() : "None"),  (sockAddr.get_port() ? sockAddr.get_port() : 0) ); //check setting
-
-    int rc = mqttNetwork.connect(sockAddr);//(host, 1883);
-    if (rc != 0) {
-            printf("Connection error.");
-            return ;//-1;
-    }
-    printf("Successfully connected!\r\n");
-
-    MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-    data.MQTTVersion = 3;
-    data.clientID.cstring = "Mbed2\0";
-
-    if ((rc = client2.connect(data)) != 0){
-            printf("Fail to connect MQTT\r\n");
-    }
-    if (client2.subscribe(topic2, MQTT::QOS0, messageArrived) != 0){
-            printf("Fail to subscribe\r\n");
-    }
-
-/*
-    wifi = WiFiInterface::get_default_instance();
-    if (!wifi) {
-            printf("ERROR: No WiFiInterface found.\r\n");
-            return ;//-1;
-    };
-
-
-    printf("\nConnecting to %s...\r\n", MBED_CONF_APP_WIFI_SSID);
-    int ret = wifi->connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2);
-    if (ret != 0) {
-            printf("\nConnection error: %d\r\n", ret);
-            return ;//-1;
-    }*/
-
-
-
-
-
-
-
-    printf("angle detection mode\r\n");
-    printf("Place the mbed on table\r\n");
-    ThisThread::sleep_for(2000ms);
-    for (int i=0; i<5; i++) {
-        led3 = 1;                            // use LED3 to show the initialization process
-        ThisThread::sleep_for(100ms);
-        led3 = 0;
-        ThisThread::sleep_for(100ms);
-    }
     
-    BSP_ACCELERO_AccGetXYZ(pDataXYZ_init);
-    printf("reference acceleration vector: (%d, %d, %d)\r\n", pDataXYZ_init[0], pDataXYZ_init[1], pDataXYZ_init[2]);
-
-    printf("Tilt the mbed after LEDs\r\n");
-    ThisThread::sleep_for(2000ms);
-    for (int i=0; i<5; i++) {
-        led3 = 1;                            // use LED3 to show the initialization process
-        ThisThread::sleep_for(100ms);
-        led3 = 0;
-        ThisThread::sleep_for(100ms);
-    }
-    
+    //int fea_list[9];
                 // tile Angle_Detection mode
-    while (mode) {
-        BSP_ACCELERO_AccGetXYZ(pDataXYZ);
-        printf ("Angle Detection: %d %d %d\r\n",pDataXYZ[0], pDataXYZ[1], pDataXYZ[2]);
+    for (int i = 0; i < 9; i++) 
+        {
+
+
+        //BSP_ACCELERO_AccGetXYZ(pDataXYZ);
+        //printf ("Angle Detection: %d %d %d\r\n",pDataXYZ[0], pDataXYZ[1], pDataXYZ[2]);
+        pDataXYZ_init[0] = DataXYZ[i][0];
+        pDataXYZ_init[1] = DataXYZ[i][1];
+        pDataXYZ_init[2] = DataXYZ[i][2];
+        pDataXYZ[0] = DataXYZ[i][0];
+        pDataXYZ[1] = DataXYZ[i][1];
+        pDataXYZ[2] = DataXYZ[i][2];
+
         mag_A = sqrt(pDataXYZ_init[0] * pDataXYZ_init[0] + pDataXYZ_init[1] * pDataXYZ_init[1] + pDataXYZ_init[2] * pDataXYZ_init[2]);
         mag_B = sqrt(pDataXYZ[0] * pDataXYZ[0] + pDataXYZ[1] * pDataXYZ[1] + pDataXYZ[2] * pDataXYZ[2]);
         cos = ((pDataXYZ_init[0] * pDataXYZ[0] + pDataXYZ_init[1] * pDataXYZ[1] + pDataXYZ_init[2] * pDataXYZ[2])/(mag_A)/(mag_B));
         rad_det = acos(cos);
         angle_det = 180.0 * rad_det/3.1415926;
         printf("angle_det = %f\r\n", angle_det);
-        uLCD_print(angle_det);
-        // queue.call(another print function for uLCD)
-
         if (angle_det > angle_list[angle_index]) {
-            //public_ctrl = 1;
-            mqtt_queue.call(&publish_message, &client2);
             printf("over tilting\n");
+            fea_list[i] = 1;
         }
-        ThisThread::sleep_for(1000ms);
+        else {
+          fea_list[i] = 0;
+        }
     }
-
-
-
-
-
-
+    //return fea_list;
 }
 
 
