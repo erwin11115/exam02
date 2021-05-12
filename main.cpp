@@ -43,7 +43,7 @@ int keep_in_loop = 1;
 
 int time_length = 20;
 
-int16_t DataXYZ[3][20] = {0};
+int16_t DataXYZ[20][3] = {0};
 
 Thread t;
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
@@ -398,6 +398,11 @@ void guesture_IU() {//Arguments *in, Reply *out) {
       continue;
     }
 
+    int k = 0;
+    while(k++<20) {
+      BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+    }
+
     // Run inference, and report any error
 
     TfLiteStatus invoke_status = interpreter->Invoke();
@@ -416,13 +421,13 @@ void guesture_IU() {//Arguments *in, Reply *out) {
 
 
     if(gesture_index == 0) {
-      cout << interpreter->output(0)->data.f[0];
+      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] << endl;
       
     } else if (gesture_index == 1) {
-      cout << interpreter->output(0)->data.f[0];
+      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
       
     } else if (gesture_index == 2) {
-      cout << interpreter->output(0)->data.f[0];
+      cout << DataXYZ[0][0] << "," << DataXYZ[0][1] << "," << DataXYZ[0][2] <<endl;
       
     }
 
