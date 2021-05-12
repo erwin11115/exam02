@@ -470,7 +470,7 @@ void guesture_IU() {//Arguments *in, Reply *out) {
 
     }
 
-    QQ = gesture_indexl;
+    QQ = gesture_index;
 
     // Produce an output
     if (gesture_index < label_num) {
