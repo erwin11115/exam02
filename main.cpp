@@ -43,7 +43,7 @@ int keep_in_loop = 1;
 
 int time_length = 20;
 
-int16_t DataXYZ[20][3] = {0};
+int16_t DataXYZ[10][3] = {0};
 
 Thread t;
 EventQueue queue(32 * EVENTS_EVENT_SIZE);
@@ -385,7 +385,7 @@ void guesture_IU() {//Arguments *in, Reply *out) {
 
   error_reporter->Report("Set up successful...\n");
 
- 
+  BSP_ACCELERO_Init();
   while (mode == 0) {
 
     // Attempt to read new data from the accelerometer
@@ -399,8 +399,9 @@ void guesture_IU() {//Arguments *in, Reply *out) {
     }
 
     int k = 0;
-    while(k++<20) {
+    while(k++<10) {
       BSP_ACCELERO_AccGetXYZ(DataXYZ[k]);
+      ThisThread::sleep_for(100ms);
     }
 
     // Run inference, and report any error
